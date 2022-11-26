@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "1088739644187",
+    "project_id": "spark-foundation-46a18",
+    "storage_bucket": "spark-foundation-46a18.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1088739644187:android:13d9cb6f126899952d79be",
+        "android_client_info": {
+          "package_name": "com.outshade.freedom_chat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1088739644187-4faopemiouccb8cetcqdvs3mlcujbm19.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD7vVbmu2KKOwWqurdrtNURLmnJaGdcD5c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1088739644187-4faopemiouccb8cetcqdvs3mlcujbm19.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1088739644187-u5tjddu42u9ml92mp5jhiuek1l2fu44v.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.freedomChat"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
