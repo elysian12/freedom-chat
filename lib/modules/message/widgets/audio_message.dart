@@ -1,37 +1,65 @@
 import 'package:flutter/material.dart';
 import 'package:freedom_chat/common/constants/colors.dart';
+import 'package:freedom_chat/models/message_model.dart';
 
-class VideoMessage extends StatelessWidget {
-  const VideoMessage({super.key});
+class AudioMessage extends StatelessWidget {
+  final ChatMessage? message;
 
+  const AudioMessage({Key? key, this.message}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: MediaQuery.of(context).size.width * 0.45, // 45% of total width
-      child: AspectRatio(
-        aspectRatio: 1.6,
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: Image.asset("assets/images/Video Place Here.png"),
+    return Container(
+      width: MediaQuery.of(context).size.width * 0.55,
+      padding: const EdgeInsets.symmetric(
+        horizontal: kDefaultPadding * 0.75,
+        vertical: kDefaultPadding / 2.5,
+      ),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(30),
+        color: kPrimaryColor.withOpacity(message!.isSender ? 1 : 0.1),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            Icons.play_arrow,
+            color: message!.isSender ? Colors.white : kPrimaryColor,
+          ),
+          Expanded(
+            child: Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: kDefaultPadding / 2),
+              child: Stack(
+                clipBehavior: Clip.none,
+                alignment: Alignment.center,
+                children: [
+                  Container(
+                    width: double.infinity,
+                    height: 2,
+                    color: message!.isSender
+                        ? Colors.white
+                        : kPrimaryColor.withOpacity(0.4),
+                  ),
+                  Positioned(
+                    left: 0,
+                    child: Container(
+                      height: 8,
+                      width: 8,
+                      decoration: BoxDecoration(
+                        color: message!.isSender ? Colors.white : kPrimaryColor,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                  )
+                ],
+              ),
             ),
-            Container(
-              height: 25,
-              width: 25,
-              decoration: const BoxDecoration(
-                color: kPrimaryColor,
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(
-                Icons.play_arrow,
-                size: 16,
-                color: Colors.white,
-              ),
-            )
-          ],
-        ),
+          ),
+          Text(
+            "0.37",
+            style: TextStyle(
+                fontSize: 12, color: message!.isSender ? Colors.white : null),
+          ),
+        ],
       ),
     );
   }

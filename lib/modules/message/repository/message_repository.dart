@@ -1,25 +1,34 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:freedom_chat/common/utils/type_defs.dart';
+import 'package:freedom_chat/models/error_model.dart';
 import 'package:freedom_chat/models/message_model.dart';
+import 'package:image_picker/image_picker.dart';
 
 final messageRepositoryProvider = Provider<MessageRepository>((ref) {
   return MessageRepository(
       firebaseAuth: FirebaseAuth.instance,
-      firestore: FirebaseFirestore.instance);
+      firestore: FirebaseFirestore.instance,
+      firebaseStorage: FirebaseStorage.instance);
 });
 
 class MessageRepository {
   final FirebaseFirestore _firestore;
   final FirebaseAuth _firebaseAuth;
+  final FirebaseStorage _firebaseStorage;
 
-  MessageRepository(
-      {required FirebaseFirestore firestore,
-      required FirebaseAuth firebaseAuth})
-      : _firestore = firestore,
+  MessageRepository({
+    required FirebaseFirestore firestore,
+    required FirebaseAuth firebaseAuth,
+    required FirebaseStorage firebaseStorage,
+  })  : _firestore = firestore,
+        _firebaseStorage = firebaseStorage,
         _firebaseAuth = firebaseAuth;
 
   Stream<List<ChatMessage>> getMessages(String recieverUserId) {
@@ -76,6 +85,39 @@ class MessageRepository {
       return '$user1$user2';
     } else {
       return '$user2$user1';
+    }
+  }
+
+  FutureEither<String?> uploadImageOrVideo(File file) async {
+    String? imgUrl;
+    final int name = DateTime.now().millisecondsSinceEpoch;
+    var ext = file.path.split('.').last;
+    log('@@ this is extension : $ext');
+    try {
+      await _firebaseStorage.ref('files/$name.$ext').putFile(file);
+      imgUrl = await _firebaseStorage.ref('files/$name.$ext').getDownloadURL();
+
+      return right(imgUrl);
+    } on FirebaseException catch (e) {
+      return left(ErrorModel(error: e.message!));
+    }
+  }
+
+  FutureEither<File> pickFile({bool isVideo = false}) async {
+    final ImagePicker picker = ImagePicker();
+
+    try {
+      final XFile? xFile = isVideo
+          ? await picker.pickVideo(source: ImageSource.gallery)
+          : await picker.pickImage(source: ImageSource.gallery);
+
+      if (xFile != null) {
+        return right(File(xFile.path));
+      } else {
+        return left(ErrorModel(error: 'Cancelled'));
+      }
+    } catch (e) {
+      return left(ErrorModel(error: e.toString()));
     }
   }
 }

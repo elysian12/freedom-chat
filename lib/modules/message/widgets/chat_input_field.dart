@@ -25,6 +25,10 @@ class _ChatInputFieldState extends ConsumerState<ChatInputField> {
     ref.read(messageControllerProvider).sendMessage(message, recieverUserId);
   }
 
+  void pickImage(WidgetRef ref, String recieverUserId) {
+    ref.read(messageControllerProvider).pickFile(context, recieverUserId);
+  }
+
   @override
   void initState() {
     controller = TextEditingController();
@@ -82,22 +86,28 @@ class _ChatInputFieldState extends ConsumerState<ChatInputField> {
                         ),
                       ),
                     ),
-                    Icon(
-                      Icons.attach_file,
-                      color: Theme.of(context)
-                          .textTheme
-                          .bodyText1!
-                          .color!
-                          .withOpacity(0.64),
+                    InkWell(
+                      onTap: () => pickImage(ref, widget.recieverUserId),
+                      child: Icon(
+                        Icons.attach_file,
+                        color: Theme.of(context)
+                            .textTheme
+                            .bodyText1!
+                            .color!
+                            .withOpacity(0.64),
+                      ),
                     ),
                     const SizedBox(width: kDefaultPadding / 4),
-                    Icon(
-                      Icons.camera_alt_outlined,
-                      color: Theme.of(context)
-                          .textTheme
-                          .bodyText1!
-                          .color!
-                          .withOpacity(0.64),
+                    InkWell(
+                      onTap: () {},
+                      child: Icon(
+                        Icons.camera_alt_outlined,
+                        color: Theme.of(context)
+                            .textTheme
+                            .bodyText1!
+                            .color!
+                            .withOpacity(0.64),
+                      ),
                     ),
                   ],
                 ),
