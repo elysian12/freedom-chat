@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -32,12 +30,14 @@ class AuthRepository {
         _ref = ref;
 
   String _verificationId = '';
+  String phoneNumber = '';
 
   Stream<User?> get authStateChanges => _firebaseAuth.authStateChanges();
 
   User? get currentUser => _firebaseAuth.currentUser;
 
   Future<void> sentOTP(String phoneNumber, BuildContext context) async {
+    this.phoneNumber = phoneNumber;
     try {
       await _firebaseAuth.verifyPhoneNumber(
         phoneNumber: '+91$phoneNumber',
@@ -79,12 +79,13 @@ class AuthRepository {
               context, ChatScreen.routeName, (route) => false);
         } else {
           user = UserModel(
-              name: 'Untitled',
-              profilePic:
-                  'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__480.png',
-              phoneNumber: '',
-              uid: userCredential.user!.uid,
-              isOnline: true);
+            name: 'Untitled',
+            profilePic:
+                'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__480.png',
+            phoneNumber: _firebaseAuth.currentUser!.phoneNumber!,
+            uid: userCredential.user!.uid,
+            isOnline: true,
+          );
           await _firestore
               .collection('users')
               .doc(userCredential.user!.uid)

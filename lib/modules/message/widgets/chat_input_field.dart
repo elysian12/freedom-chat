@@ -1,10 +1,35 @@
-import 'package:flutter/material.dart';
-import 'package:freedom_chat/common/constants/colors.dart';
+import 'dart:developer';
 
-class ChatInputField extends StatelessWidget {
-  const ChatInputField({
-    Key? key,
-  }) : super(key: key);
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:freedom_chat/common/constants/colors.dart';
+import 'package:freedom_chat/models/message_model.dart';
+import 'package:freedom_chat/modules/message/controller/message_controller.dart';
+import 'package:uuid/uuid.dart';
+
+class ChatInputField extends ConsumerStatefulWidget {
+  final String recieverUserId;
+  const ChatInputField({Key? key, required this.recieverUserId})
+      : super(key: key);
+
+  @override
+  ConsumerState<ConsumerStatefulWidget> createState() => _ChatInputFieldState();
+}
+
+class _ChatInputFieldState extends ConsumerState<ChatInputField> {
+  late TextEditingController controller;
+
+  void sendMessage(WidgetRef ref, ChatMessage message, String recieverUserId) {
+    log('sendMessage(from ui)  $recieverUserId');
+    ref.read(messageControllerProvider).sendMessage(message, recieverUserId);
+  }
+
+  @override
+  void initState() {
+    controller = TextEditingController();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,9 +73,10 @@ class ChatInputField extends StatelessWidget {
                           .withOpacity(0.64),
                     ),
                     const SizedBox(width: kDefaultPadding / 4),
-                    const Expanded(
+                    Expanded(
                       child: TextField(
-                        decoration: InputDecoration(
+                        controller: controller,
+                        decoration: const InputDecoration(
                           hintText: "Type message",
                           border: InputBorder.none,
                         ),
@@ -77,6 +103,22 @@ class ChatInputField extends StatelessWidget {
                 ),
               ),
             ),
+            IconButton(
+              onPressed: () {
+                ChatMessage message = ChatMessage(
+                    createdAt: DateTime.now(),
+                    messageType: ChatMessageType.text,
+                    messageStatus: MessageStatus.notViewed,
+                    isSender: FirebaseAuth.instance.currentUser!.uid ==
+                        widget.recieverUserId,
+                    text: controller.text,
+                    id: const Uuid().v1(),
+                    uid: FirebaseAuth.instance.currentUser!.uid);
+                sendMessage(ref, message, widget.recieverUserId);
+                controller.clear();
+              },
+              icon: const Icon(Icons.send),
+            )
           ],
         ),
       ),

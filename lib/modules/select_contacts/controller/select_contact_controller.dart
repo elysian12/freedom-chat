@@ -9,23 +9,21 @@ final getContactsProvider = FutureProvider((ref) {
   return selectContactRepository.getContacts();
 });
 
-final selectContactControllerProvider = Provider((ref) {
+final selectContactControllerProvider =
+    StateNotifierProvider<SelectContactNotifier, bool>((ref) {
   final selectContactRepository = ref.watch(selectContactsRepositoryProvider);
-  return SelectContactController(
-    ref: ref,
-    selectContactRepository: selectContactRepository,
-  );
+  return SelectContactNotifier(contactRepository: selectContactRepository);
 });
 
-class SelectContactController {
-  final ProviderRef ref;
-  final SelectContactRepository selectContactRepository;
-  SelectContactController({
-    required this.ref,
-    required this.selectContactRepository,
-  });
+class SelectContactNotifier extends StateNotifier<bool> {
+  final SelectContactRepository _contactRepository;
+  SelectContactNotifier({required SelectContactRepository contactRepository})
+      : _contactRepository = contactRepository,
+        super(false);
 
-  void selectContact(Contact selectedContact, BuildContext context) {
-    selectContactRepository.selectContact(selectedContact, context);
+  void selectContact(Contact selectedContact, BuildContext context) async {
+    state = true;
+    await _contactRepository.selectContact(selectedContact, context);
+    state = false;
   }
 }

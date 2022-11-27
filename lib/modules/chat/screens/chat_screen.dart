@@ -1,17 +1,20 @@
 import 'dart:developer';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freedom_chat/common/constants/colors.dart';
+import 'package:freedom_chat/common/widgets/loading_overlay.dart';
 import 'package:freedom_chat/models/chat_contacts.dart';
 import 'package:freedom_chat/models/user_model.dart';
 import 'package:freedom_chat/modules/auth/controller/auth_controller.dart';
+import 'package:freedom_chat/modules/chat/controller/chat_controller.dart';
 import 'package:freedom_chat/modules/chat/widgets/chat_card.dart';
 import 'package:freedom_chat/modules/message/screens/message_screen.dart';
 import 'package:freedom_chat/modules/select_contacts/screens/select_contact_screen.dart';
 
 class ChatScreen extends ConsumerStatefulWidget {
-  static const String routeName = '/Chat-screen';
+  static const String routeName = '/chat-screen';
   const ChatScreen({super.key});
 
   @override
@@ -24,7 +27,6 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     var user = ref.watch(userProvider)!;
-    log('profile${user.profilePic}');
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -36,22 +38,34 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           ),
         ],
       ),
-      body: ListView.builder(
-        itemCount: chatsData.length,
-        itemBuilder: (context, index) => ChatCard(
-          chat: chatsData[index],
-          press: () {
-            Navigator.pushNamed(
-              context,
-              MessageScreen.routeName,
-              arguments: {
-                'name': '',
-                'uid': '',
-              },
-            );
-          },
-        ),
-      ),
+      body: ref.watch(getChatsProvider).when(
+            data: (chats) {
+              return ListView.builder(
+                itemCount: chats.length,
+                itemBuilder: (context, index) => ChatCard(
+                  chat: chats[index],
+                  press: () {
+                    var receiverUid = chats[index].users[0] !=
+                            FirebaseAuth.instance.currentUser!.uid
+                        ? chats[index].users[0]
+                        : chats[index].users[1];
+                    log(receiverUid);
+                    Navigator.pushNamed(
+                      context,
+                      MessageScreen.routeName,
+                      arguments: {
+                        'name': chats[index].name,
+                        'uid': receiverUid,
+                      },
+                    );
+                  },
+                ),
+              );
+            },
+            error: (error, stackTrace) =>
+                ErrorText(errorText: error.toString()),
+            loading: () => const Loader(),
+          ),
       bottomNavigationBar: buildBottomNavigationBar(user),
       floatingActionButton: FloatingActionButton(
         backgroundColor: kPrimaryColor,

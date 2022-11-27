@@ -1,14 +1,48 @@
 class Chat {
-  final String name, lastMessage, image, time;
+  final String name;
+  final String id;
+  String lastMessage;
+  String image;
+  String time;
   final bool isActive;
+  List<String> users;
+  Map<String, dynamic> userInfo;
 
-  Chat({
-    this.name = '',
-    this.lastMessage = '',
-    this.image = '',
-    this.time = '',
-    this.isActive = false,
-  });
+  Chat(
+      {this.name = '',
+      this.id = '',
+      this.lastMessage = '',
+      this.image = '',
+      this.time = '',
+      this.isActive = false,
+      this.users = const [],
+      this.userInfo = const {}});
+
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'name': name,
+      'lastMessage': lastMessage,
+      'image': image,
+      'time': time,
+      'isActive': isActive,
+      'id': id,
+      'users': users,
+      'userInfo': userInfo
+    };
+  }
+
+  factory Chat.fromMap(Map<String, dynamic> map) {
+    return Chat(
+      id: map['name'] as String,
+      name: map['name'] as String,
+      lastMessage: map['lastMessage'] as String,
+      image: map['image'] as String,
+      time: map['time'] as String,
+      isActive: map['isActive'] as bool,
+      userInfo: map['userInfo'] as Map<String, dynamic>,
+      users: List<String>.from((map['users'] as List).map((e) => e)),
+    );
+  }
 }
 
 List chatsData = [

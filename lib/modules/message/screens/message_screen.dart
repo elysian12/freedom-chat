@@ -1,8 +1,12 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:freedom_chat/common/constants/colors.dart';
+import 'package:freedom_chat/common/widgets/loading_overlay.dart';
 import 'package:freedom_chat/models/message_model.dart';
+import 'package:freedom_chat/modules/message/controller/message_controller.dart';
 import 'package:freedom_chat/modules/message/widgets/chat_input_field.dart';
 
 import '../widgets/message.dart';
@@ -21,21 +25,30 @@ class MessageScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: buildAppBar(receiverUid, receiverName),
-      body: Column(
-        children: [
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: kDefaultPadding),
-              child: ListView.builder(
-                itemCount: demeChatMessages.length,
-                itemBuilder: (context, index) =>
-                    Message(message: demeChatMessages[index]),
-              ),
-            ),
+      body: ref.watch(getMessagesProvider(receiverUid)).when(
+            data: (data) {
+              return Column(
+                children: [
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: kDefaultPadding),
+                      child: ListView.builder(
+                        reverse: true,
+                        itemCount: data.length,
+                        itemBuilder: (context, index) =>
+                            Message(message: data[index]),
+                      ),
+                    ),
+                  ),
+                  ChatInputField(recieverUserId: receiverUid),
+                ],
+              );
+            },
+            error: (error, stackTrace) =>
+                ErrorText(errorText: error.toString()),
+            loading: () => const Loader(),
           ),
-          const ChatInputField(),
-        ],
-      ),
     );
   }
 
