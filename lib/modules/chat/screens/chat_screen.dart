@@ -54,7 +54,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                       context,
                       MessageScreen.routeName,
                       arguments: {
-                        'name': chats[index].name,
+                        'name': chats[index].userInfo[receiverUid],
                         'uid': receiverUid,
                       },
                     );

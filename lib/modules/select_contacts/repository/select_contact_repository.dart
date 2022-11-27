@@ -45,7 +45,7 @@ class SelectContactRepository {
     try {
       var userCollection = await _firestore.collection('users').get();
       bool isFound = false;
-      UserModel currentUser;
+      UserModel? currentUser;
 
       for (var document in userCollection.docs) {
         var userData = UserModel.fromMap(document.data());
@@ -79,14 +79,18 @@ class SelectContactRepository {
             return;
           } else {
             Chat chat = Chat(
-                id: chatId,
-                image: userData.profilePic,
-                isActive: false,
-                lastMessage: '',
-                name: userData.name,
-                time: DateFormat('hh:mm a').format(DateTime.now()),
-                users: [userData.uid, _firebaseAuth.currentUser!.uid],
-                userInfo: {});
+              id: chatId,
+              image: userData.profilePic,
+              isActive: false,
+              lastMessage: '',
+              name: userData.name,
+              time: DateFormat('hh:mm a').format(DateTime.now()),
+              users: [userData.uid, _firebaseAuth.currentUser!.uid],
+              userInfo: {
+                userData.uid: userData.name,
+                currentUser!.uid: currentUser.name,
+              },
+            );
             await chatroom.reference.set(chat.toMap());
           }
           // ignore: use_build_context_synchronously

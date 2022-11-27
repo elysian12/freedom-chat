@@ -60,5 +60,11 @@
 	<false/>
 	<key>NSContactsUsageDescription</key>
      <string>To chat with user</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+     <string>For sharing photos and videos</string>
+	<key>NSCameraUsageDescription</key>
+     <string>For sharing photos and videos</string>
+	<key>NSMicrophoneUsageDescription</key>
+     <string>For sharing photos and videos</string>
 </dict>
 </plist>

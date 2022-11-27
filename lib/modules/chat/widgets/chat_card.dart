@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:freedom_chat/common/constants/colors.dart';
 import 'package:freedom_chat/models/chat_contacts.dart';
@@ -14,6 +15,9 @@ class ChatCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var receiverUid = chat.users[0] != FirebaseAuth.instance.currentUser!.uid
+        ? chat.users[0]
+        : chat.users[1];
     return InkWell(
       onTap: press,
       child: Padding(
@@ -53,7 +57,7 @@ class ChatCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      chat.name,
+                      chat.userInfo[receiverUid],
                       style: const TextStyle(
                           fontSize: 16, fontWeight: FontWeight.w500),
                     ),
