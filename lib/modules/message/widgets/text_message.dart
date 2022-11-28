@@ -21,13 +21,20 @@ class TextMessage extends StatelessWidget {
         color: kPrimaryColor.withOpacity(message!.isSender ? 1 : 0.1),
         borderRadius: BorderRadius.circular(30),
       ),
-      child: Text(
-        message!.text,
-        style: TextStyle(
-          color: message!.isSender
-              ? Colors.white
-              : Theme.of(context).textTheme.bodyText1!.color,
-        ),
+      child: Wrap(
+        children: [
+          Text(
+            message!.text,
+            maxLines: 100,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              overflow: TextOverflow.ellipsis,
+              color: message!.isSender
+                  ? Colors.white
+                  : Theme.of(context).textTheme.bodyText1!.color,
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:freedom_chat/common/constants/colors.dart';
 import 'package:freedom_chat/models/message_model.dart';
 
-import 'package:freedom_chat/modules/message/widgets/audio_message.dart';
 import 'package:freedom_chat/modules/message/widgets/image_message.dart';
 
 import 'text_message.dart';
@@ -43,7 +42,9 @@ class Message extends StatelessWidget {
             ),
             const SizedBox(width: kDefaultPadding / 2),
           ],
-          messageContaint(message),
+          Flexible(
+            child: messageContaint(message),
+          ),
           if (message.isSender) MessageStatusDot(status: message.messageStatus)
         ],
       ),
